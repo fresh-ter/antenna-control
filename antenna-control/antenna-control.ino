@@ -2,22 +2,30 @@
 
 const int stepsPerRevolution = 20;  // the number of steps per revolution
 
-Stepper myStepper(stepsPerRevolution, 6, 7, 8, 9);
+Stepper stepper_1(stepsPerRevolution, 6, 7, 8, 9);
+Stepper stepper_2(stepsPerRevolution, 2, 3, 4, 5);
 
 int x_status = 0;
 int y_status = 0;
 
 void setup() {
-    // myStepper.setSpeed(60); // rpm
     Serial.begin(9600);
 }
 
-void motor_run(int speed, int direction) {
-    myStepper.setSpeed(speed);
+void motor_1_run(int speed, int direction) {
+    stepper_1.setSpeed(speed);
     if (direction>0)
-        myStepper.step(stepsPerRevolution);
+        stepper_1.step(stepsPerRevolution);
     else if (direction<0)
-        myStepper.step(-stepsPerRevolution);
+        stepper_1.step(-stepsPerRevolution);
+}
+
+void motor_2_run(int speed, int direction) {
+    stepper_2.setSpeed(speed);
+    if (direction>0)
+        stepper_2.step(stepsPerRevolution);
+    else if (direction<0)
+        stepper_2.step(-stepsPerRevolution);
 }
 
 void loop() {
@@ -48,18 +56,23 @@ void loop() {
         x_status = -2;
     }
 
-    // if (y_axis > 1000)
-    // {
-    //   y_status = 1;
-    // }
-    // else if (y_axis < 50)
-    // {
-    //   y_status = -1;
-    // }
-    // else
-    // {
-    //   y_status = 0;
-    // }
+
+    if (y_axis > 700)
+    {
+        y_status = 1;
+    }
+    if (y_axis > 1000)
+    {
+        y_status = 2;
+    }
+    if (y_axis < 350)
+    {
+        y_status = -1;
+    }
+    if (y_axis < 100)
+    {
+        y_status = -2;
+    }
 
     Serial.print(x_status);
     Serial.print(", ");
@@ -68,19 +81,36 @@ void loop() {
 
     if (x_status == 1)
     {
-        motor_run(200,1);
+        motor_1_run(200,1);
     }
     else if (x_status == -1)
     {
-        motor_run(200,-1);
+        motor_1_run(200,-1);
     }
     else if (x_status == 2)
     {
-        motor_run(400,1);
+        motor_1_run(400,1);
     }
     else if (x_status == -2)
     {
-        motor_run(400,-1);
+        motor_1_run(400,-1);
+    }
+
+    if (y_status == 1)
+    {
+        motor_2_run(200,1);
+    }
+    else if (y_status == -1)
+    {
+        motor_2_run(200,-1);
+    }
+    else if (y_status == 2)
+    {
+        motor_2_run(400,1);
+    }
+    else if (y_status == -2)
+    {
+        motor_2_run(400,-1);
     }
 }
 
